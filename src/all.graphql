@@ -1,0 +1,174 @@
+type TextQuestion {
+  _id: String!
+  label: String!
+  isRequired: Boolean!
+  order: Int!
+}
+
+type DateQuestion {
+  _id: String!
+  label: String!
+  isRequired: Boolean!
+  order: Int!
+}
+
+type OneFromManyQuestion {
+  _id: String!
+  label: String!
+  options: [String!]!
+  isRequired: Boolean!
+  order: Int!
+}
+
+type SeveralFromManyQuestion {
+  _id: String!
+  label: String!
+  options: [String!]!
+  isRequired: Boolean!
+  order: Int!
+}
+
+type MultiLineTextQuestion {
+  _id: String!
+  label: String!
+  options: [String!]!
+  isRequired: Boolean!
+  order: Int!
+}
+
+type Questions {
+  text: [TextQuestion!]!
+  multiLineText: [MultiLineTextQuestion!]!
+  date: [DateQuestion!]!
+  oneFromMany: [OneFromManyQuestion!]!
+  severalFromMany: [SeveralFromManyQuestion!]!
+}
+
+input TextQuestionInput {
+  label: String!
+  isRequired: Boolean!
+  order: Int!
+}
+
+input MultiLineTextQuestionInput {
+  label: String!
+  isRequired: Boolean!
+  order: Int!
+}
+
+input DateQuestionInput {
+  label: String!
+  isRequired: Boolean!
+  order: Int!
+}
+
+input OneFromManyQuestionInput {
+  label: String!
+  options: [String!]!
+  isRequired: Boolean!
+  order: Int!
+}
+
+input SeveralFromManyQuestionInput {
+  label: String!
+  options: [String!]!
+  isRequired: Boolean!
+  order: Int!
+}
+
+input QuestionsInput {
+  text: [TextQuestionInput!]!
+  multiLineText: [MultiLineTextQuestionInput!]!
+  date: [DateQuestionInput!]!
+  oneFromMany: [OneFromManyQuestionInput!]!
+  severalFromMany: [SeveralFromManyQuestionInput!]!
+}
+
+input AnswersInput {
+  text: [String]!
+  multiLineText: [String]!
+  date: [String]!
+  oneFromMany: [String]!
+  severalFromMany: [String]!
+}
+
+input CreateFormInput {
+  name: String!
+  desc: String!
+  isPrivate: Boolean!
+  questions: QuestionsInput!
+  invitedUsersToReply: [String!]!
+}
+
+input CreateFormReplyInput {
+  formId: ID!
+  answers: AnswersInput!
+}
+
+input ChangeFormAcceptsRepliesStatus {
+  to: Boolean!
+  formId: String!
+}
+
+input GetUserInput {
+  username: String!
+}
+
+input InviteUsersToReplyFormInput {
+  formId: ID!
+  userIds: [ID!]!
+}
+
+type User {
+  _id: ID!
+  username: String!
+  githubId: String!
+}
+
+type Answers {
+  text: [String]!
+  multiLineText: [String]!
+  date: [String]!
+  oneFromMany: [Int]!
+  severalFromMany: [Int]!
+}
+
+type Form {
+  _id: ID!
+  name: String!
+  desc: String!
+  questions: Questions!
+  numReplies: Int!
+  acceptsReplies: Boolean!
+  invitedUsersToReply: [User!]!
+  isAllowedToReply: Boolean!
+  repliers: [User!]!
+}
+
+type FormReply {
+  _id: ID!
+  answers: Answers!
+}
+
+type InviteUserToReplyNotification {
+  _id: ID!
+  type: String!
+  formId: ID!
+  form: Form!
+}
+
+union NotificationUnion = InviteUserToReplyNotification
+
+type Query {
+  me: User!
+  form(_id: ID!): Form!
+  notifications: [NotificationUnion!]!
+  user(input: GetUserInput!): User!
+}
+
+type Mutation {
+  createForm(input: CreateFormInput!): Form!
+  createFormReply(input: CreateFormReplyInput!): FormReply!
+  changeFormAcceptsRepliesStatus(input: ChangeFormAcceptsRepliesStatus!): Boolean!
+  inviteUsersToReplyForm(input: InviteUsersToReplyFormInput!): Boolean!
+}
